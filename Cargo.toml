@@ -1,7 +1,10 @@
 [package]
 name = "bismuth"
 version = "0.1.0"
-authors = ["Michael Meyer <meyerz.michael@gmail.com>"]
+authors = [
+  "Michael Meyer <meyerz.michael@gmail.com>",
+  "Hugh Harris <dhharris9@gmail.com>",
+]
 
 [dependencies]
 glium = "*"
