@@ -1,6 +1,7 @@
 #[macro_use]
 extern crate glium;
 
+#[cfg(not(test))]
 fn main() {
     use glium::{glutin, Surface};
 
