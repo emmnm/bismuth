@@ -14,7 +14,7 @@ impl LSystem {
     /// 3. Each char in alphabet has a rule that maps it to something else
     ///   -> by default a char maps to itself, but this can be overriden with
     ///   the `push` method
-    
+
     pub fn new(start: String) -> LSystem {
         // push chars in start to alphabet
         // and make them map to themselves in a rule
@@ -30,7 +30,7 @@ impl LSystem {
         LSystem {
             alphabet: alphabet,
             constants: Vec::new(),
-            start: start, 
+            start: start,
             rules: rules,
         }
     }
@@ -38,7 +38,7 @@ impl LSystem {
     pub fn next(&mut self) -> LSystem {
         let mut next = String::from("");
         for c in self.start.chars() {
-            next.push_str(self.get(c)); 
+            next.push_str(self.get(c));
         }
 
         LSystem {
