@@ -1,6 +1,10 @@
 # bismuth
 rust art
 
-run using cargo
+how to run 
 
     cargo run
+
+how to run unit tests
+
+    cargo test
