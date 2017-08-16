@@ -35,6 +35,10 @@ impl LSystem {
         }
     }
 
+    pub fn to_string(&self) -> String {
+        self.start.clone() 
+    }
+
     pub fn next(&mut self) -> LSystem {
         let mut next = String::from("");
         for c in self.start.chars() {
@@ -162,5 +166,22 @@ mod tests {
         lsys.push(rule);
         let next: LSystem = lsys.next();
         assert_eq!(next.start, "ABA");
+    }
+
+    #[test]
+    fn test_next_should_work_in_chains() {
+        let mut lsys: LSystem = LSystem::new("AB".to_string());
+        let mut rule: HashMap<char, String> = HashMap::new();
+        rule.insert('A', "AB".to_string());
+        rule.insert('B', "A".to_string());
+        lsys.push(rule);
+        let next: LSystem = lsys.next().next();
+        assert_eq!(next.start, "ABAAB");
+    }
+
+    #[test]
+    fn test_to_string_should_return_start_string() {
+        let lsys: LSystem = LSystem::new("AB".to_string());
+        assert_eq!(lsys.to_string(), "AB");
     }
 }
