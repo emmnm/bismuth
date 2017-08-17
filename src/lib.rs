@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-struct LSystem {
+pub struct LSystem {
     alphabet: Vec<char>,
     constants: Vec<char>,
     start: String,
