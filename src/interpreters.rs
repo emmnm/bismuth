@@ -4,7 +4,7 @@ pub fn from_fractal_plant(s: String) -> Vec<Vertex> {
     // Example 7, wikipedia.
 
     const ANGLE_SIZE: f32 = 0.43; // about 25 degrees in rads.
-    const STEP_SIZE: f32 = 0.15;
+    const STEP_SIZE: f32 = 0.05;
 
     #[derive(Copy, Clone)]
     struct State {
@@ -14,8 +14,8 @@ pub fn from_fractal_plant(s: String) -> Vec<Vertex> {
     };
 
     let mut current = State {
-        x: 0.0,
-        y: 0.0,
+        x: -1.0,
+        y: -1.0,
         theta: 45.0,
     };
     let mut stack = vec![];
@@ -38,7 +38,10 @@ pub fn from_fractal_plant(s: String) -> Vec<Vertex> {
             '+' => (current.theta += ANGLE_SIZE),
             '[' => (stack.push(current)),
             ']' => (current = stack.pop().unwrap()),
-            _ => assert!(false),
+            _ => {
+                println!("c: {}", c);
+                assert!(false)
+            }
         };
     }
 

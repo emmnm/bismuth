@@ -4,6 +4,10 @@ extern crate glium;
 mod geometry;
 mod shaders;
 mod interpreters;
+mod lib;
+
+use lib::LSystem;
+use std::collections::HashMap;
 
 use shaders::{VERTEX_SHADER_SRC, FRAGMENT_SHADER_SRC};
 
@@ -15,7 +19,24 @@ fn main() {
     let context = glutin::ContextBuilder::new();
     let display = glium::Display::new(window, context, &events_loop).unwrap();
 
-    let shape = interpreters::from_fractal_plant(String::from("F+F[F]--[F]"));
+    let mut lsys: LSystem = LSystem::new("X".to_string());
+    lsys.add('F');
+    lsys.add_constant('+');
+    lsys.add_constant('-');
+    lsys.add_constant('[');
+    lsys.add_constant(']');
+    let mut rule: HashMap<char, String> = HashMap::new();
+    rule.insert('X', "F[-X][X]F[-X]+FX".to_string());
+    rule.insert('F', "FF".to_string());
+    lsys.push(rule);
+
+    // Iterate 6 times
+    for _ in 0..4 {
+        lsys = lsys.next();
+    }
+    println!("lsys: {}", lsys.to_string());
+
+    let shape = interpreters::from_fractal_plant(lsys.to_string());
 
     let vertex_buffer = glium::VertexBuffer::new(&display, &shape).unwrap();
     let indices = glium::index::NoIndices(glium::index::PrimitiveType::LinesList);
