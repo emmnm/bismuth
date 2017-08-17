@@ -16,7 +16,7 @@ fn test_lsystem_example() {
     lsys.add_constant('-');
     lsys.add_constant('[');
     lsys.add_constant(']');
-    let mut rule: HashMap<char, String> = HashMap::new(); 
+    let mut rule: HashMap<char, String> = HashMap::new();
     rule.insert('X', "F[−X][X]F[−X]+FX".to_string());
     rule.insert('F', "FF".to_string());
     lsys.push(rule);
@@ -25,7 +25,7 @@ fn test_lsystem_example() {
     for _ in 0..6 {
         lsys = lsys.next();
     }
-    
+
     // Read solution file
     let mut file = File::open("tests/ex7sol.txt").unwrap();
     let mut soln = String::new();
