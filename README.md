@@ -8,3 +8,7 @@ how to run
 how to run unit tests
 
     cargo test
+
+## Resources
+
+* https://en.wikipedia.org/wiki/L-system
