@@ -12,8 +12,9 @@ impl LSystem {
     /// 1. Every char in start is in alphabet
     /// 2. Given a rule X -> Y, X and Y are in alphabet
     /// 3. Each char in alphabet has a rule that maps it to something else
-    ///   -> by default a char maps to itself, but this can be overriden with
+    ///   -> by default a char maps to itself, but this can be overwriten with
     ///   the `push` method
+    /// See https://en.wikipedia.org/wiki/L-system for more details
 
     pub fn new(start: String) -> LSystem {
         // push chars in start to alphabet
@@ -36,9 +37,10 @@ impl LSystem {
     }
 
     pub fn to_string(&self) -> String {
-        self.start.clone() 
+        self.start.clone()
     }
 
+    /// Iterate to the next LSystem string, following all rules
     pub fn next(&mut self) -> LSystem {
         let mut next = String::from("");
         for c in self.start.chars() {
@@ -53,28 +55,44 @@ impl LSystem {
         }
     }
 
-    fn add_char(&mut self, c: char) {
+    /// Add a character to the alphabet with the default 'identity rule'
+    pub fn add(&mut self, c: char) {
         if !self.alphabet.contains(&c) {
             self.alphabet.push(c);
             self.rules.insert(c, c.to_string());
         }
     }
 
+    /// Helper function for push
+    fn overwrite_rule(&mut self, key: &char, value: &String) {
+        *self.rules.get_mut(key).unwrap() = value.to_owned();
+    }
+
+    /// Add a constant to the LSystem
+    /// Constants always map to themselves and cannot be changed
+    pub fn add_constant(&mut self, c: char) {
+        self.add(c);
+        self.constants.push(c);
+    }
+
+    /// Add a new rule to the LSystem
+    /// If the values in the rule do not exist, they are added
     pub fn push(&mut self, rule: HashMap<char, String>) {
         for (key, value) in &rule {
-            // Make sure that key, value is in alphabet
-            for c in value.chars() {
-                self.add_char(c);
+            // Make sure key is not a constant
+            if !self.constants.contains(&key) {
+                for c in value.chars() {
+                    self.add(c);
+                }
+                if !self.rules.contains_key(key) {
+                    self.add(*key);
+                }
+                self.overwrite_rule(key, value);
             }
-            if !self.rules.contains_key(key) {
-                self.add_char(*key);
-            }
-            // Add key value pair
-            *self.rules.get_mut(key).unwrap() = value.to_owned();
         }
     }
 
-    /// Returns the value that key maps to
+    /// Returns the rule for which key maps to
     pub fn get(&self, key: char) -> &String {
         &self.rules[&key]
     }
@@ -110,7 +128,42 @@ mod tests {
     }
 
     #[test]
-    fn test_push_should_override_existing_rule() {
+    fn test_add_should_add_to_alphabet() {
+        let mut lsys: LSystem = LSystem::new("A".to_string());
+        lsys.add('B');
+        assert!(lsys.alphabet.contains(&'B'));
+    }
+
+    #[test]
+    fn test_add_should_add_default_rule() {
+        let mut lsys: LSystem = LSystem::new("A".to_string());
+        lsys.add('B');
+        assert_eq!(*lsys.get('B'), "B");
+    }
+
+    #[test]
+    fn test_add_constant_should_add_to_constants() {
+        let mut lsys: LSystem = LSystem::new("A".to_string());
+        lsys.add_constant('B');
+        assert!(lsys.constants.contains(&'B'));
+    }
+
+    #[test]
+    fn test_add_constant_should_add_to_alphabet() {
+        let mut lsys: LSystem = LSystem::new("A".to_string());
+        lsys.add_constant('B');
+        assert!(lsys.alphabet.contains(&'B'));
+    }
+
+    #[test]
+    fn test_add_constant_should_add_default_rule() {
+        let mut lsys: LSystem = LSystem::new("A".to_string());
+        lsys.add_constant('B');
+        assert_eq!(*lsys.get('B'), "B");
+    }
+
+    #[test]
+    fn test_push_should_overwrite_existing_rule() {
         let mut lsys: LSystem = LSystem::new("A".to_string());
         let mut rule: HashMap<char, String> = HashMap::new();
         rule.insert('A', "B".to_string());
@@ -134,6 +187,16 @@ mod tests {
         rule.insert('A', "B".to_string());
         lsys.push(rule);
         assert_eq!(*lsys.get('B'), "B");
+    }
+
+    #[test]
+    fn test_push_should_not_overwrite_constants() {
+        let mut lsys: LSystem = LSystem::new("A".to_string());
+        lsys.add_constant('A');
+        let mut rule: HashMap<char, String> = HashMap::new();
+        rule.insert('A', "B".to_string());
+        lsys.push(rule);
+        assert_eq!(*lsys.get('A'), "A");
     }
 
     #[test]
