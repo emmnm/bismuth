@@ -3,17 +3,9 @@ extern crate glium;
 
 mod geometry;
 mod shaders;
+mod interpreters;
 
-use geometry::Vertex;
 use shaders::{VERTEX_SHADER_SRC, FRAGMENT_SHADER_SRC};
-
-fn get_vertices() -> Vec<Vertex> {
-    let vertex1 = Vertex { position: [-0.5, -0.5] };
-    let vertex2 = Vertex { position: [0.0, 0.5] };
-    let vertex3 = Vertex { position: [0.5, -0.25] };
-    let vertex4 = Vertex { position: [0.5, 0.0] };
-    vec![vertex1, vertex2, vertex3, vertex4]
-}
 
 fn main() {
     use glium::{glutin, Surface};
@@ -23,7 +15,7 @@ fn main() {
     let context = glutin::ContextBuilder::new();
     let display = glium::Display::new(window, context, &events_loop).unwrap();
 
-    let shape = get_vertices();
+    let shape = interpreters::from_fractal_plant(String::from("F+F[F]--[F]"));
 
     let vertex_buffer = glium::VertexBuffer::new(&display, &shape).unwrap();
     let indices = glium::index::NoIndices(glium::index::PrimitiveType::LinesList);
