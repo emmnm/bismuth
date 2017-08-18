@@ -1,3 +1,6 @@
+extern crate rand;
+
+use rand::distributions::{IndependentSample, Range};
 use std::collections::HashMap;
 
 pub struct LSystem {
@@ -45,6 +48,34 @@ impl LSystem {
         let mut next = String::from("");
         for c in self.start.chars() {
             next.push_str(self.get(c));
+        }
+
+        LSystem {
+            alphabet: self.alphabet.clone(),
+            constants: self.constants.clone(),
+            start: next,
+            rules: self.rules.clone(),
+        }
+    }
+
+    /// Randomly selects a character in the start string to apply
+    /// the rules to, then returns an LSystem with the new string
+    pub fn next_rand(&mut self) -> LSystem {
+        let mut next = String::from(""); 
+        let mut index = 0;
+
+        if self.start.len() > 1 {
+            let between = Range::new(0, self.start.len() - 1);
+            let mut rng = rand::thread_rng();
+            index = between.ind_sample(&mut rng);
+        } 
+
+        for (i, c) in self.start.chars().enumerate() {
+            if i != index {
+                next.push_str(&c.to_string());
+            } else {
+                next.push_str(self.get(c));
+            }
         }
 
         LSystem {
@@ -240,6 +271,25 @@ mod tests {
         lsys.push(rule);
         let next: LSystem = lsys.next().next();
         assert_eq!(next.start, "ABAAB");
+    }
+    #[test]
+    fn test_next_rand_should_apply_rule_once() {
+        let mut lsys: LSystem = LSystem::new("AA".to_string());
+        let mut rule: HashMap<char, String> = HashMap::new();
+        rule.insert('A', "B".to_string());
+        lsys.push(rule);
+        let next: LSystem = lsys.next_rand();
+        assert!(next.start == "AB" || next.start == "BA");
+    }
+
+    #[test]
+    fn test_next_rand_should_work_with_single_char_start() {
+        let mut lsys: LSystem = LSystem::new("A".to_string());
+        let mut rule: HashMap<char, String> = HashMap::new();
+        rule.insert('A', "B".to_string());
+        lsys.push(rule);
+        let next: LSystem = lsys.next_rand();
+        assert_eq!(next.start, "B");
     }
 
     #[test]

@@ -1,5 +1,6 @@
 #[macro_use]
 extern crate glium;
+extern crate rand;
 
 mod geometry;
 mod shaders;
@@ -31,8 +32,8 @@ fn main() {
     lsys.push(rule);
 
     // Iterate 6 times
-    for _ in 0..4 {
-        lsys = lsys.next();
+    for _ in 0..1000 {
+        lsys = lsys.next_rand();
     }
     println!("lsys: {}", lsys.to_string());
 
