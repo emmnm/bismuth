@@ -6,5 +6,14 @@ authors = [
   "Hugh Harris <dhharris9@gmail.com>",
 ]
 
+[lib]
+test = false
+doctest = false
+
+[profile.test]
+panic = 'unwind'
+debug-assertions = true
+
 [dependencies]
 glium = "*"
+rand = "0.3"

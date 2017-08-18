@@ -6,7 +6,6 @@ use std::fs::File;
 use std::io::prelude::*;
 
 
-#[test]
 fn test_lsystem_example() {
     // Integration test for example 7 on wiki page
     // https://en.wikipedia.org/wiki/L-system#Example_7:_Fractal_plant
