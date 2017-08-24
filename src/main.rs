@@ -16,7 +16,7 @@ fn main() {
     use glium::{glutin, Surface};
 
     let mut events_loop = glutin::EventsLoop::new();
-    let window = glutin::WindowBuilder::new();
+    let window = glutin::WindowBuilder::new().with_title("Bismuth");
     let context = glutin::ContextBuilder::new();
     let display = glium::Display::new(window, context, &events_loop).unwrap();
 
