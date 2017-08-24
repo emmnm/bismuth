@@ -47,7 +47,18 @@ fn main() {
             .unwrap();
 
     let mut closed = false;
+    let mut displacement_x: f32 = 0.0;
+    let mut displacement_y: f32 = 0.0;
     while !closed {
+        let uniforms =
+            uniform! {
+            view_matrix: [
+                [1.0, 0.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0, 0.0],
+                [0.0, 0.0, 1.0, 0.0],
+                [displacement_x, displacement_y, 0.0, 1.0]
+            ]
+        };
         let mut target = display.draw();
         target.clear_color(0.0, 0.0, 0.05, 1.0);
         target
@@ -55,7 +66,7 @@ fn main() {
                 &vertex_buffer,
                 &indices,
                 &program,
-                &glium::uniforms::EmptyUniforms,
+                &uniforms,
                 &Default::default(),
             )
             .unwrap();
@@ -65,6 +76,20 @@ fn main() {
             glutin::Event::WindowEvent { event, .. } => {
                 match event {
                     glutin::WindowEvent::Closed => closed = true,
+                    glutin::WindowEvent::KeyboardInput {
+                        device_id: _,
+                        input,
+                    } => {
+                        println!("Key: {:?}", input.virtual_keycode.unwrap());
+                        let code = input.virtual_keycode.unwrap();
+                        match code {
+                            glutin::VirtualKeyCode::Up => displacement_y -= 0.05,
+                            glutin::VirtualKeyCode::Down => displacement_y += 0.05,
+                            glutin::VirtualKeyCode::Left => displacement_x += 0.05,
+                            glutin::VirtualKeyCode::Right => displacement_x -= 0.05,
+                            _ => (),
+                        }
+                    }
                     _ => (),
                 }
             }
